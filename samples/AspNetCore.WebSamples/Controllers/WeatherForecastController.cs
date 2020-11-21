@@ -20,7 +20,7 @@ namespace AspNetCore.WebSamples.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IServiceStackRedisCache _redisCache;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,IServiceStackRedisCache redisCache)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IServiceStackRedisCache redisCache)
         {
             _logger = logger;
             this._redisCache = redisCache;
@@ -29,21 +29,30 @@ namespace AspNetCore.WebSamples.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
+#if DEBUG
             CheckRedisFreeLicenseRequestLimit();
-
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+#endif
+            var array = _redisCache.Get<WeatherForecast[]>("WeatherForecast");
+            if (array == null)
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                var rng = new Random();
+                array = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+                {
+                    Date = DateTime.Now.AddDays(index),
+                    TemperatureC = rng.Next(-20, 55),
+                    Summary = Summaries[rng.Next(Summaries.Length)]
+                }).ToArray();
+
+                // Cache for 30 minutes
+                _redisCache.Set("WeatherForecast", array, 60 * 1 * 30);
+            }
+
+            return array;
         }
 
         private void CheckRedisFreeLicenseRequestLimit()
         {
-            _redisCache.SetString("word","ok");
+            _redisCache.SetString("word", "ok");
             for (int i = 0; i < 9999; i++)
             {
                 _logger.LogInformation($"The {i}st request: {_redisCache.GetString("word")}");

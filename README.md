@@ -160,3 +160,49 @@ public class ServiceStackRedisOptions
     public long DefaultDb { get; set; } = 0;
 }
 ```
+
+### Usage
+
+`WeatherForecastController.cs`
+
+```csharp
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
+{
+    private static readonly string[] Summaries = new[]
+    {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
+
+    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly IServiceStackRedisCache _redisCache;
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IServiceStackRedisCache redisCache)
+    {
+        _logger = logger;
+        this._redisCache = redisCache;
+    }
+
+    [HttpGet]
+    public IEnumerable<WeatherForecast> Get()
+    {
+        var array = _redisCache.Get<WeatherForecast[]>("WeatherForecast");
+        if (array == null)
+        {
+            var rng = new Random();
+            array = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = DateTime.Now.AddDays(index),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            }).ToArray();
+
+            // Cache for 30 minutes
+            _redisCache.Set("WeatherForecast", array, 60 * 1 * 30);
+        }
+
+        return array;
+    }
+}
+```
