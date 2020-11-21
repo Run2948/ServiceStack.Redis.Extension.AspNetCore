@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Distributed cache implementation of ServiceStack.Redis.Core</Description>
+    <VersionPrefix>1.0.1</VersionPrefix>
+    <Authors>Run2948</Authors>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8</LangVersion>
+    <PackageId>ServiceStack.Redis.Extension.AspNetCore</PackageId>
+    <PackageTags>Cache Redis ServiceStackRedis Extension AspNetCore</PackageTags>
+    <PackageProjectUrl>https://github.com/Run2948/ServiceStack.Redis.Extension.AspNetCore</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Run2948/ServiceStack.Redis.Extension.AspNetCore</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Copyright © Run2948</Copyright>
+    <NeutralLanguage></NeutralLanguage>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>1.0.2</Version>
+    <PackageLicenseExpression></PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+    <PackageReference Include="ServiceStack.Redis.Core" Version="5.10.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ServiceStack.Text.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

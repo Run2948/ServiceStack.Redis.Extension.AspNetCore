@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceStack.Redis.Extension.AspNetCore", "src\ServiceStack.Redis.Extension.AspNetCore\ServiceStack.Redis.Extension.AspNetCore.csproj", "{31C071E2-79B9-4995-B003-D629B8910D60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.WebSamples", "samples\AspNetCore.WebSamples\AspNetCore.WebSamples.csproj", "{FFF5DCFC-BD1E-4767-A629-DBB3A9C9DE73}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{70722B29-336E-474D-9021-10FDB5042C68}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E670A906-8BAA-4E41-80EB-06F49C526E39}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{FA37C627-2094-492A-AC1B-7056F279807D}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31C071E2-79B9-4995-B003-D629B8910D60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31C071E2-79B9-4995-B003-D629B8910D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31C071E2-79B9-4995-B003-D629B8910D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31C071E2-79B9-4995-B003-D629B8910D60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFF5DCFC-BD1E-4767-A629-DBB3A9C9DE73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFF5DCFC-BD1E-4767-A629-DBB3A9C9DE73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFF5DCFC-BD1E-4767-A629-DBB3A9C9DE73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFF5DCFC-BD1E-4767-A629-DBB3A9C9DE73}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31C071E2-79B9-4995-B003-D629B8910D60} = {70722B29-336E-474D-9021-10FDB5042C68}
+		{FFF5DCFC-BD1E-4767-A629-DBB3A9C9DE73} = {E670A906-8BAA-4E41-80EB-06F49C526E39}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {73AB7D6A-0228-4F65-9963-69AEB906DD5C}
+	EndGlobalSection
+EndGlobal
