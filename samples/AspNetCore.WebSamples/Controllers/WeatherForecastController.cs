@@ -20,10 +20,10 @@ namespace AspNetCore.WebSamples.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IServiceStackRedisCache _redisCache;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,IServiceStackRedisCache _redisCache)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IServiceStackRedisCache redisCache)
         {
             _logger = logger;
-            this._redisCache = _redisCache;
+            this._redisCache = redisCache;
         }
 
         [HttpGet]

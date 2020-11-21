@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <Description>Distributed cache implementation of ServiceStack.Redis.Core</Description>
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>Run2948</Authors>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>8</LangVersion>
     <PackageId>ServiceStack.Redis.Extension.AspNetCore</PackageId>
     <PackageTags>Cache Redis ServiceStackRedis Extension AspNetCore</PackageTags>
@@ -15,9 +15,12 @@
     <Copyright>Copyright © Run2948</Copyright>
     <NeutralLanguage></NeutralLanguage>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.2</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>1.0.3</Version>
     <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);LibContentTarget</TargetsForTfmSpecificBuildOutput>
+    <PackageReleaseNotes>解除ServiceStack.Redis每小时6000次请求的限制</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,9 +29,25 @@
     <PackageReference Include="ServiceStack.Redis.Core" Version="5.10.2" />
   </ItemGroup>
 
+  <Target Name="LibContentTarget">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="lib\ServiceStack.Text.dll" Condition="'$(TargetFramework)' == 'netstandard2.1'">
+        <PackagePath>lib\$(TargetFramework)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
-    <None Update="ServiceStack.Text.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>lib\ServiceStack.Text.dll</HintPath>
+      <PrivateAssets>all</PrivateAssets>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
     </None>
     <None Include="icon.png">
       <Pack>True</Pack>
