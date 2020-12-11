@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Distributed cache implementation of ServiceStack.Redis.Core</Description>
+    <Description>Distributed cache implementation of ServiceStack.Redis.Core for ASP.NET Core</Description>
     <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>Run2948</Authors>
     <TargetFrameworks>netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
@@ -16,11 +16,11 @@
     <NeutralLanguage></NeutralLanguage>
     <PackageIcon>icon.png</PackageIcon>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);LibContentTarget</TargetsForTfmSpecificBuildOutput>
-    <PackageReleaseNotes>Add multi-version support</PackageReleaseNotes>
+    <PackageReleaseNotes>Remove 6000 requests per hour restrictions for multi-version</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -58,7 +58,7 @@
 
   <Target Name="LibContentTarget">
     <ItemGroup>
-      <TfmSpecificPackageFile Include="lib\ServiceStack.Text.dll" Condition="'$(TargetFramework)' == 'netstandard2.1'">
+      <TfmSpecificPackageFile Include="lib\ServiceStack.Text.dll">
         <PackagePath>lib\$(TargetFramework)</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
