@@ -84,7 +84,7 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         }
 
         #region  String 操作
-        
+
         public void SetString(string key, string value, int expirySeconds = -1)
         {
             using var redisClient = GetRedisClient();
@@ -95,6 +95,19 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             else
             {
                 redisClient.SetValue(key, value, new TimeSpan(0, 0, 0, expirySeconds));
+            }
+        }
+
+        public void SetString(string key, string value, TimeSpan? expireIn)
+        {
+            using var redisClient = GetRedisClient();
+            if (expireIn == null)
+            {
+                redisClient.SetValue(key, value);
+            }
+            else
+            {
+                redisClient.SetValue(key, value, expireIn.Value);
             }
         }
 
@@ -121,7 +134,7 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         #endregion
 
         #region Store-Object 操作
-        
+
         /// <summary>
         /// 自动根据Id字段产生主键字符串，如果Id是int，没值，则默认就是0
         /// </summary>
@@ -167,8 +180,7 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         }
 
         /// <summary>
-        /// 常用。
-        /// 后台关联出表数据时，可以用此函数取出对应用户，然后对表数据刷上用户名。
+        /// 常用。后台关联出表数据时，可以用此函数取出对应用户，然后对表数据刷上用户名。
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="ids"></param>
@@ -228,6 +240,20 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             return expirySeconds == -1 ? redisClient.Add(key, entity) : redisClient.Add(key, entity, new TimeSpan(0, 0, 0, expirySeconds));
         }
 
+        /// <summary>
+        /// 如果不存在key缓存，则添加，返回true。如果已经存在key缓存，则不作操作，返回false。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="entity"></param>
+        ///  <param name="expireIn">过期时间</param>
+        /// <returns></returns>
+        public bool AddIfNotExist<T>(string key, T entity, TimeSpan? expireIn)
+        {
+            using var redisClient = GetRedisClient();
+            return expireIn == null ? redisClient.Add(key, entity) : redisClient.Add(key, entity, expireIn.Value);
+        }
+
         public T Get<T>(string key)
         {
             using var redisClient = GetRedisClient(true);
@@ -247,6 +273,19 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             }
         }
 
+        public void Set<T>(string key, T entity, TimeSpan? expireIn)
+        {
+            using var redisClient = GetRedisClient();
+            if (expireIn == null)
+            {
+                redisClient.Set(key, entity);
+            }
+            else
+            {
+                redisClient.Set(key, entity, expireIn.Value);
+            }
+        }
+
         /// <summary>
         /// key如果不存在，则添加value，返回true；如果key已经存在，则不添加value，返回false。
         /// </summary>
@@ -258,16 +297,27 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         public bool SetIfNotExists<T>(string key, T entity, int expirySeconds = -1)
         {
             using var redisClient = GetRedisClient();
-            if (expirySeconds == -1)
-            {
-                return redisClient.Add(key, entity);
-            }
-            return redisClient.Add(key, entity, new TimeSpan(0, 0, 0, expirySeconds));
+            return expirySeconds == -1 ? redisClient.Add(key, entity) : redisClient.Add(key, entity, new TimeSpan(0, 0, 0, expirySeconds));
+        }
+
+        /// <summary>
+        /// key如果不存在，则添加value，返回true；如果key已经存在，则不添加value，返回false。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="entity"></param>
+        /// <param name="expireIn">过期时间</param>
+        /// <returns></returns>
+        public bool SetIfNotExists<T>(string key, T entity, TimeSpan? expireIn)
+        {
+            using var redisClient = GetRedisClient();
+            return expireIn == null ? redisClient.Add(key, entity) : redisClient.Add(key, entity, expireIn.Value);
         }
 
         #endregion
 
         #region Hash-Store 操作
+
         /// <summary>
         /// 将一个对象存入Hash。比如对象User有Id=1和Name="aa"属性，则生成的Hash存储是key为urn:user:1，
         /// 第一行field为Id，它的value是1，第二行field为Name，它的value是"aa"。
@@ -277,6 +327,7 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             using var redisClient = GetRedisClient();
             redisClient.StoreAsHash(entity);
         }
+
         /// <summary>
         /// 根据Id获取对象(存储的时候使用Hash)
         /// </summary>
@@ -333,6 +384,16 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             return redisClient.GetHashValues(hashId);
         }
 
+        /// <summary>
+        /// 根据HashId 获取 hash 字典值
+        /// </summary>
+        /// <param name="hashId"></param>
+        /// <returns></returns>
+        public Dictionary<string, string> GetEntriesFromHash(string hashId)
+        {
+            using var redisClient = GetRedisClient(true);
+            return redisClient.GetAllEntriesFromHash(hashId);
+        }
 
         /// <summary>
         /// 指定Key 移除 hash值
@@ -345,7 +406,6 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             redisClient.RemoveEntryFromHash(hashId, key);
         }
 
-
         /// <summary>
         /// 指定hashId key 存储Hash值
         /// </summary>
@@ -356,6 +416,18 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         {
             using var redisClient = GetRedisClient();
             redisClient.SetEntryInHash(hashId, key, value);
+        }
+
+        /// <summary>
+        /// 指定hashId key，如果不存在则存储Hash值
+        /// </summary>
+        /// <param name="hashId"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetEntryInHashIfNotExists(string hashId, string key, string value)
+        {
+            using var redisClient = GetRedisClient();
+            redisClient.SetEntryInHashIfNotExists(hashId, key, value);
         }
 
         /// <summary>
@@ -383,9 +455,11 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             var val = redisClient.GetValuesFromHash(hashId, keys);
             return val;
         }
+
         #endregion
 
         #region List 操作
+
         /// <summary>
         /// 添加value 到现有List
         /// </summary>
@@ -423,11 +497,24 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         /// 从队列取数据 先进先出
         /// </summary>
         /// <param name="listId"></param>
+        /// <param name="timeoutSeconds">超时秒数</param>
         /// <returns></returns>
-        public string DequeueItemFromList(string listId)
+        public string DequeueItemFromList(string listId, int timeoutSeconds = -1)
         {
             using var redisClient = GetRedisClient();
-            return redisClient.BlockingDequeueItemFromList(listId, TimeSpan.FromHours(2));
+            return timeoutSeconds == -1 ? redisClient.DequeueItemFromList(listId) : redisClient.BlockingDequeueItemFromList(listId, new TimeSpan(0, 0, 0, timeoutSeconds));
+        }
+
+        /// <summary>
+        /// 从队列取数据 先进先出
+        /// </summary>
+        /// <param name="listId"></param>
+        /// <param name="timeOut">超时时间</param>
+        /// <returns></returns>
+        public string DequeueItemFromList(string listId, TimeSpan? timeOut = null)
+        {
+            using var redisClient = GetRedisClient();
+            return timeOut == null ? redisClient.DequeueItemFromList(listId) : redisClient.BlockingDequeueItemFromList(listId, timeOut);
         }
 
         /// <summary>
@@ -440,6 +527,7 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
             using var redisClient = GetRedisClient();
             redisClient.EnqueueItemOnList(listId, value);
         }
+
         #endregion
 
         #region Inc-Dec 操作
@@ -536,6 +624,30 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         {
             using var redisClient = GetRedisClient();
             redisClient.SetAll(map);
+        }
+
+        public bool Expire(string key, int seconds)
+        {
+            using var redisClient = GetRedisClient();
+            return redisClient.Expire(key, seconds);
+        }
+
+        public bool ExpireAt(string key, long unixTime)
+        {
+            using var redisClient = GetRedisClient();
+            return redisClient.ExpireAt(key, unixTime);
+        }
+
+        public bool ExpireEntryAt(string key, DateTime expireAt)
+        {
+            using var redisClient = GetRedisClient();
+            return redisClient.ExpireEntryAt(key, expireAt);
+        }
+
+        public bool ExpireEntryIn(string key, TimeSpan expireIn)
+        {
+            using var redisClient = GetRedisClient();
+            return redisClient.ExpireEntryIn(key, expireIn);
         }
 
         #endregion

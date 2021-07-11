@@ -4,7 +4,7 @@
     <Description>Distributed cache implementation of ServiceStack.Redis.Core for ASP.NET Core</Description>
     <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>Run2948</Authors>
-    <TargetFrameworks>netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <LangVersion>8</LangVersion>
     <PackageId>ServiceStack.Redis.Extension.AspNetCore</PackageId>
     <PackageTags>Cache Redis ServiceStackRedis Extension AspNetCore</PackageTags>
@@ -16,11 +16,20 @@
     <NeutralLanguage></NeutralLanguage>
     <PackageIcon>icon.png</PackageIcon>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.1.1</Version>
+    <Version>1.1.3</Version>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);LibContentTarget</TargetsForTfmSpecificBuildOutput>
-    <PackageReleaseNotes>Remove 6000 requests per hour restrictions for multi-version</PackageReleaseNotes>
+    <PackageReleaseNotes>Remove the 6000 requests per hour limit, Methods such as Expire and ExpireEntry are supplemented.</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\$(TargetFramework)\ServiceStack.Redis.Extension.AspNetCore.xml</DocumentationFile>
+    <NoWarn>1701;1702;1570;1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\$(TargetFramework)\ServiceStack.Redis.Extension.AspNetCore.xml</DocumentationFile>
+    <NoWarn>1701;1702;1570;1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -28,8 +37,8 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.*" />
@@ -40,8 +49,8 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.3" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.*" />
@@ -53,7 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ServiceStack.Redis.Core" Version="5.10.2" />
+    <PackageReference Include="ServiceStack.Redis.Core" Version="5.11.0" />
   </ItemGroup>
 
   <Target Name="LibContentTarget">
@@ -61,6 +70,11 @@
       <TfmSpecificPackageFile Include="lib\ServiceStack.Text.dll">
         <PackagePath>lib\$(TargetFramework)</PackagePath>
       </TfmSpecificPackageFile>
+      <!--
+      <TfmSpecificPackageFile Include="lib\ServiceStack.Text.xml">
+        <PackagePath>lib\$(TargetFramework)</PackagePath>
+      </TfmSpecificPackageFile>
+      -->
     </ItemGroup>
   </Target>
 
@@ -80,6 +94,19 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="lib\ServiceStack.Text.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>ServiceStack.Text.dll</TargetPath>
+    </None>
+    <!--
+    <None Update="lib\ServiceStack.Text.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>ServiceStack.Text.xml</TargetPath>
+    </None>
+    -->
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ServiceStack.Redis;
 
@@ -16,6 +17,8 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         #region String 操作
 
         void SetString(string key, string value, int expirySeconds = -1);
+
+        void SetString(string key, string value, TimeSpan? expireIn);
 
         string GetString(string key);
 
@@ -76,6 +79,12 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
 
         void DeleteById<T>(object id) where T : class, new();
 
+        /// <summary>
+        /// 常用。后台关联出表数据时，可以用此函数取出对应用户，然后对表数据刷上用户名。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ids"></param>
+        /// <returns></returns>
         void DeleteByIds<T>(ICollection ids) where T : class, new();
 
         /// <summary>
@@ -88,9 +97,21 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         /// <returns></returns>
         bool AddIfNotExist<T>(string key, T entity, int expirySeconds = -1);
 
+        /// <summary>
+        /// 如果不存在key缓存，则添加，返回true。如果已经存在key缓存，则不作操作，返回false。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="entity"></param>
+        ///  <param name="expireIn">过期时间</param>
+        /// <returns></returns>
+        bool AddIfNotExist<T>(string key, T entity, TimeSpan? expireIn);
+
         T Get<T>(string key);
 
         void Set<T>(string key, T entity, int expirySeconds = -1);
+
+        void Set<T>(string key, T entity, TimeSpan? expireIn);
 
         /// <summary>
         /// key如果不存在，则添加value，返回true；如果key已经存在，则不添加value，返回false。
@@ -101,6 +122,16 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         /// <param name="expirySeconds">过期秒数</param>
         /// <returns></returns>
         bool SetIfNotExists<T>(string key, T entity, int expirySeconds = -1);
+
+        /// <summary>
+        /// key如果不存在，则添加value，返回true；如果key已经存在，则不添加value，返回false。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="entity"></param>
+        /// <param name="expireIn">过期时间</param>
+        /// <returns></returns>
+        bool SetIfNotExists<T>(string key, T entity, TimeSpan? expireIn);
 
         #endregion
 
@@ -148,6 +179,13 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         List<string> GetHashValues(string hashId);
 
         /// <summary>
+        /// 根据HashId 获取 hash 字典值
+        /// </summary>
+        /// <param name="hashId"></param>
+        /// <returns></returns>
+        Dictionary<string, string> GetEntriesFromHash(string hashId);
+
+        /// <summary>
         /// 指定Key 移除 hash值
         /// </summary>
         /// <param name="hashId"></param>
@@ -161,6 +199,14 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         /// <param name="key"></param>
         /// <param name="value"></param>
         void SetEntryInHash(string hashId, string key, string value);
+
+        /// <summary>
+        /// 指定hashId key，如果不存在则存储Hash值
+        /// </summary>
+        /// <param name="hashId"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        void SetEntryInHashIfNotExists(string hashId, string key, string value);
 
         /// <summary>
         /// 取一个函数的单个字段值时，用此函数。
@@ -204,8 +250,17 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         /// 从队列取数据 先进先出
         /// </summary>
         /// <param name="listId"></param>
+        /// <param name="timeoutSeconds">超时秒数</param>
         /// <returns></returns>
-        string DequeueItemFromList(string listId);
+        string DequeueItemFromList(string listId, int timeoutSeconds = -1);
+
+        /// <summary>
+        /// 从队列取数据 先进先出
+        /// </summary>
+        /// <param name="listId"></param>
+        /// <param name="timeOut">超时时间</param>
+        /// <returns></returns>
+        string DequeueItemFromList(string listId, TimeSpan? timeOut = null);
 
         /// <summary>
         /// 存储数据到队列 先进先出
@@ -251,6 +306,14 @@ namespace Microsoft.Extensions.Caching.ServiceStackRedis
         void SetAll(IEnumerable<string> keys, IEnumerable<string> values);
 
         void SetAll(Dictionary<string, string> map);
+
+        bool Expire(string key, int seconds);
+
+        bool ExpireAt(string key, long unixTime);
+
+        bool ExpireEntryAt(string key, DateTime expireAt);
+
+        bool ExpireEntryIn(string key, TimeSpan expireIn);
 
         #endregion
     }
